@@ -1,19 +1,30 @@
-Welcome to JustFLAC
-===================
+# Java Free Lossless Audio Codec
+This is a fork of [JustFLAC](https://github.com/soiaf/Java-Apple-Lossless-decoder) and [JavaFlacEncoder](https://github.com/amplexus/java-flac-encoder).
 
-What the heck?
---------------
+This library contains a port of the Free Lossless Audio Codec (FLAC) decoder to Java and a FLAC encoder implemented in Java. It is designed to enable easy addition of FLAC support in Java applications.
 
-It isn't a fish, it's just a fork of the popular jFLAC decoder. 
+## Add the library to your project (gradle)
+1. Add the Maven Central repository (if not exist) to your build file:
+```groovy
+repositories {
+    ...
+    mavenCentral()
+}
+```
 
-Why fork jFLAC?
----------------
+2. Add the dependency:
+```groovy
+dependencies {
+    ...
+    implementation 'com.tianscar.javasound:javasound-flac:1.4.0'
+}
+```
 
-jFLAC hasn't been updated in a long time and does not support certain formats like 24-bit/192kHz. The decoder also has a few minor bugs. So this project adds support for a new format extension and fixes some bugs.
+## Usage
+[Tests and Examples](/src/test/java/org/kc7bfi/jflac/test)  
+[Command-line interfaces](/src/test/java/org/kc7bfi/jflac/cli)
 
-JustFLAC is already used in MediaChest and Music-Barrel (Java programs) giving life to audiophile quality formats previously supported only by Foobar and DeaDBeeF (C programs).
+Note you need to download test audios [here](https://github.com/Tianscar/fbodemo1) and put them to /src/test/java/resources to run the test code properly!
 
-Where to find the FLAC standard?
---------------------------------
-
-Follow the [link](https://www.xiph.org/flac/format.html).
+## License
+[LGPL-2.1](/LICENSE)
