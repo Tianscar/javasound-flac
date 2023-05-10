@@ -1,5 +1,5 @@
 # Java Free Lossless Audio Codec
-This is a fork of [JustFLAC](https://github.com/soiaf/Java-Apple-Lossless-decoder) and [JavaFlacEncoder](https://github.com/amplexus/java-flac-encoder).
+This is a fork of [JustFLAC](https://github.com/drogatkin/JustFLAC) and [JavaFlacEncoder](https://github.com/amplexus/java-flac-encoder).
 
 This library contains a port of the Free Lossless Audio Codec (FLAC) decoder to Java and a FLAC encoder implemented in Java. It is designed to enable easy addition of FLAC support in Java applications.
 
