@@ -23,11 +23,12 @@ package org.kc7bfi.jflac.sound.spi;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.SequenceInputStream;
 import java.net.URL;
+import java.net.URLConnection;
+import java.nio.file.Files;
 
 import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioFormat;
@@ -41,6 +42,8 @@ import org.kc7bfi.jflac.FLACDecoder;
 import org.kc7bfi.jflac.io.BitInputStream;
 import org.kc7bfi.jflac.io.BitOutputStream;
 import org.kc7bfi.jflac.metadata.StreamInfo;
+
+import static java.nio.file.StandardOpenOption.READ;
 
 /**
  * Provider for Flac audio file reading services. This implementation can parse
@@ -72,12 +75,8 @@ public class FlacAudioFileReader extends AudioFileReader {
      *                if an I/O exception occurs.
      */
     public AudioFileFormat getAudioFileFormat(File file) throws UnsupportedAudioFileException, IOException {
-        InputStream inputStream = null;
-        try {
-            inputStream = new FileInputStream(file);
-            return getAudioFileFormat(inputStream, (int) file.length());
-        } finally {
-            inputStream.close();
+        try (InputStream inputStream = Files.newInputStream(file.toPath(), READ)) {
+            return getAudioFileFormat(inputStream, file.length());
         }
     }
 
@@ -96,11 +95,9 @@ public class FlacAudioFileReader extends AudioFileReader {
      *                if an I/O exception occurs.
      */
     public AudioFileFormat getAudioFileFormat(URL url) throws UnsupportedAudioFileException, IOException {
-        InputStream inputStream = url.openStream();
-        try {
-            return getAudioFileFormat(inputStream);
-        } finally {
-            inputStream.close();
+        URLConnection connection = url.openConnection();
+        try (InputStream inputStream = connection.getInputStream()) {
+            return getAudioFileFormat(inputStream, connection.getContentLengthLong());
         }
     }
 
@@ -151,7 +148,7 @@ public class FlacAudioFileReader extends AudioFileReader {
      * @exception IOException
      *                if an I/O exception occurs.
      */
-    protected AudioFileFormat getAudioFileFormat(InputStream bitStream, int mediaLength) throws UnsupportedAudioFileException, IOException {
+    protected AudioFileFormat getAudioFileFormat(InputStream bitStream, long mediaLength) throws UnsupportedAudioFileException, IOException {
         AudioFormat format;
         //try {
             // If we can't read the format of this stream, we must restore
@@ -266,7 +263,7 @@ public class FlacAudioFileReader extends AudioFileReader {
     	if (DEBUG) {
     		System.out.println("FLAC file reader: got stream with format "+format);
     	}
-        return new AudioFileFormat(FlacFileFormatType.FLAC, format, AudioSystem.NOT_SPECIFIED);
+        return new FlacAudioFileFormat(mediaLength, streamInfo, format);
     }
 
     /**
@@ -284,13 +281,10 @@ public class FlacAudioFileReader extends AudioFileReader {
      *                if an I/O exception occurs.
      */
     public AudioInputStream getAudioInputStream(File file) throws UnsupportedAudioFileException, IOException {
-        InputStream inputStream = new FileInputStream(file);
+        InputStream inputStream = Files.newInputStream(file.toPath(), READ);
         try {
-            return getAudioInputStream(inputStream, (int) file.length());
-        } catch (UnsupportedAudioFileException e) {
-            inputStream.close();
-            throw e;
-        } catch (IOException e) {
+            return getAudioInputStream(inputStream, file.length());
+        } catch (UnsupportedAudioFileException | IOException e) {
             inputStream.close();
             throw e;
         }
@@ -311,13 +305,11 @@ public class FlacAudioFileReader extends AudioFileReader {
      *                if an I/O exception occurs.
      */
     public AudioInputStream getAudioInputStream(URL url) throws UnsupportedAudioFileException, IOException {
-        InputStream inputStream = url.openStream();
+        URLConnection connection = url.openConnection();
+        InputStream inputStream = connection.getInputStream();
         try {
-            return getAudioInputStream(inputStream);
-        } catch (UnsupportedAudioFileException e) {
-            inputStream.close();
-            throw e;
-        } catch (IOException e) {
+            return getAudioInputStream(inputStream, connection.getContentLengthLong());
+        } catch (UnsupportedAudioFileException | IOException e) {
             inputStream.close();
             throw e;
         }
@@ -349,7 +341,7 @@ public class FlacAudioFileReader extends AudioFileReader {
      * @param inputStream
      *            the input stream from which the AudioInputStream should be
      *            constructed.
-     * @param medialength
+     * @param mediaLength
      * @return an AudioInputStream object based on the audio file data contained
      *         in the input stream.
      * @exception UnsupportedAudioFileException
@@ -358,8 +350,8 @@ public class FlacAudioFileReader extends AudioFileReader {
      * @exception IOException
      *                if an I/O exception occurs.
      */
-    protected AudioInputStream getAudioInputStream(InputStream inputStream, int medialength) throws UnsupportedAudioFileException, IOException {
-        AudioFileFormat audioFileFormat = getAudioFileFormat(inputStream, medialength);
+    protected AudioInputStream getAudioInputStream(InputStream inputStream, long mediaLength) throws UnsupportedAudioFileException, IOException {
+        AudioFileFormat audioFileFormat = getAudioFileFormat(inputStream, mediaLength);
         
         // push back the StreamInfo
         ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
@@ -381,6 +373,7 @@ public class FlacAudioFileReader extends AudioFileReader {
         SequenceInputStream sequenceInputStream = new SequenceInputStream(byteInStream, inputStream);
         //return new AudioInputStream(sequenceInputStream, audioFileFormat
         //        .getFormat(), audioFileFormat.getFrameLength());
-        return new AudioInputStream(sequenceInputStream, audioFileFormat.getFormat(), audioFileFormat.getFrameLength());
+        return new AudioInputStream(sequenceInputStream, audioFileFormat.getFormat(), mediaLength);
     }
+
 }

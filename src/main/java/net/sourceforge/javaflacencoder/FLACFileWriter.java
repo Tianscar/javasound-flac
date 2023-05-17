@@ -23,11 +23,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioFileFormat.Type;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.spi.AudioFileWriter;
+
+import static org.kc7bfi.jflac.sound.spi.FlacFileFormatType.FLAC;
 
 /**
  * Class provides FLAC encoding using javax sound SPI.
@@ -35,14 +36,9 @@ import javax.sound.sampled.spi.AudioFileWriter;
 public class FLACFileWriter extends AudioFileWriter {
 
   /**
-   * Specifies a FLAC file.
-   */
-  public static final Type FLAC = new Type("FLAC", "flac");
-
-  /**
    * FLAC type
    */
-  private static final Type flacTypes[] = { FLAC };
+  private static final Type[] flacTypes = { FLAC };
 
   /** Maximum number of bytes to read from file at once */
   private static final int MAX_READ = 16384;

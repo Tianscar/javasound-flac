@@ -281,8 +281,7 @@ public class FlacFormatConversionProvider extends FormatConversionProvider {
 					&& targetFormat.getEncoding().equals(
 							AudioFormat.Encoding.PCM_SIGNED)) {
 				// decoder
-				return new Flac2PcmAudioInputStream(sourceStream, targetFormat,
-						-1);
+				return new Flac2PcmAudioInputStream(sourceStream, targetFormat, sourceStream.getFrameLength());
 			} else if (sourceFormat.getChannels() == targetFormat.getChannels()
 					&& sourceFormat.getSampleSizeInBits() == targetFormat.getSampleSizeInBits()
 					&& sourceFormat.getEncoding().equals(
@@ -296,8 +295,8 @@ public class FlacFormatConversionProvider extends FormatConversionProvider {
 						"FLAC encoder not yet implemented");
 			} else {
 				throw new IllegalArgumentException("unable to convert "
-						+ sourceFormat.toString() + " to "
-						+ targetFormat.toString());
+						+ sourceFormat + " to "
+						+ targetFormat);
 			}
 		} else {
 			throw new IllegalArgumentException("conversion not supported");
