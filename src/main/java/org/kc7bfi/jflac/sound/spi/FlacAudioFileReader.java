@@ -116,7 +116,14 @@ public class FlacAudioFileReader extends AudioFileReader {
      *                if an I/O exception occurs.
      */
     public AudioFileFormat getAudioFileFormat(InputStream stream) throws UnsupportedAudioFileException, IOException {
-        return getAudioFileFormat(stream, AudioSystem.NOT_SPECIFIED);
+        stream.mark(1000);
+        try {
+            return getAudioFileFormat(stream, AudioSystem.NOT_SPECIFIED);
+        }
+        catch (UnsupportedAudioFileException | IOException e) {
+            stream.reset();
+            throw e;
+        }
     }
 
     /**
@@ -331,7 +338,14 @@ public class FlacAudioFileReader extends AudioFileReader {
      *                if an I/O exception occurs.
      */
     public AudioInputStream getAudioInputStream(InputStream stream) throws UnsupportedAudioFileException, IOException {
-        return getAudioInputStream(stream, AudioSystem.NOT_SPECIFIED);
+        stream.mark(1000);
+        try {
+            return getAudioInputStream(stream, AudioSystem.NOT_SPECIFIED);
+        }
+        catch (UnsupportedAudioFileException | IOException e) {
+            stream.reset();
+            throw e;
+        }
     }
 
     /**

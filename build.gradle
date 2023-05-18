@@ -9,8 +9,8 @@ ext {
     libraryGroupName = 'com.tianscar.javasound'
     libraryVendorName = 'Tianscar'
 
-    libraryVersionCode = 1
-    libraryVersionName = '1.4.0'
+    libraryVersionCode = 2
+    libraryVersionName = '1.4.1'
 
     librarySourceCompatibility = JavaVersion.VERSION_1_8
     libraryTargetCompatibility = JavaVersion.VERSION_1_8
