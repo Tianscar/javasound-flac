@@ -1,3 +1,5 @@
+WARNING: THIS PROJECT IS NO LONGER MAINTAINED. MOVED TO: https://github.com/jseproject/jse-spi
+
 # Java Free Lossless Audio Codec
 This is a fork of [JustFLAC](https://github.com/drogatkin/JustFLAC) and [JavaFlacEncoder](https://github.com/amplexus/java-flac-encoder).
 
